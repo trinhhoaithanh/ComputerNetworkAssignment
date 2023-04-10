@@ -68,6 +68,7 @@ class Client:
 	
 	def setupMovie(self):
 		"""Setup button handler."""
+		print(123)
 	#TODO
 	
 	def exitClient(self):
