@@ -92,19 +92,18 @@ class Client:
 	
 	def listenRtp(self):		
 		"""Listen for RTP packets."""
+		print("Client starts listening...")
 		while True:
 			try:
-				print("LISTENING...")
 				data = self.rtpSocket.recv(20480)
 				if data:
 					rtpPacket = RtpPacket()
 					rtpPacket.decode(data)
-					
-					currFrameNbr = rtpPacket.seqNum()
-					print ("CURRENT SEQUENCE NUM: " + str(currFrameNbr))
-										
-					if currFrameNbr > self.frameNbr: # Discard the late packet
-						self.frameNbr = currFrameNbr
+					frameNum = rtpPacket.seqNum()
+					print ("Current frame number: " + str(frameNum))
+					# Check for duplicating packet
+					if frameNum > self.frameNbr: 
+						self.frameNbr = frameNum
 						self.updateMovie(self.writeFrame(rtpPacket.getPayload()))
 			except:
 			# Stop listening in case requesting PAUSE or TEARDOWN
@@ -112,12 +111,13 @@ class Client:
 				if not self.run.is_set():
 					break
 				
-				#  ACK's value update as TEARDOWN request,
-				# close the RTP socket
+				# ACK's value update as TEARDOWN request,
+				# Close the RTP socket
 				if self.teardownAcked == 1:
 					self.rtpSocket.shutdown(socket.SHUT_RDWR)
 					self.rtpSocket.close()
 					break 
+		print("Client stops listening.")
 		#TODO
 					
 	def writeFrame(self, data):
@@ -208,7 +208,7 @@ class Client:
 		# Send the RTSP request using rtspSocket
 		self.rtspSocket.send(request.encode())
 		print('Data sent:\n')
-		print(request)
+		print(request, '\n')
 	def recvRtspReply(self):
 		"""Receive RTSP reply from the server."""
 		while True: 
