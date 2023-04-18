@@ -92,7 +92,6 @@ class Client:
 	
 	def listenRtp(self):		
 		"""Listen for RTP packets."""
-		print("Client starts listening...")
 		while True:
 			try:
 				data = self.rtpSocket.recv(20480)
@@ -117,7 +116,6 @@ class Client:
 					self.rtpSocket.shutdown(socket.SHUT_RDWR)
 					self.rtpSocket.close()
 					break 
-		print("Client stops listening.")
 		#TODO
 					
 	def writeFrame(self, data):
